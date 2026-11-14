@@ -36,10 +36,10 @@ public class StrategyAdapterDemo {
         // 4. Успешная оплата через Adapter
         PaymentProcessor paymentProcessor = new PaymentGatewayAdapter(new LegacyPaymentGateway());
         boolean success = paymentProcessor.processPayment(250.0);
-        System.*out*.println("4. Successful Payment: " + success);
+        System.out.println("4. Successful Payment: " + success);
 
         // 5. Неуспешная оплата через Adapter
         boolean failed = paymentProcessor.processPayment(-50.0);
-        System.*out*.println("5. Failed Payment: " + failed);
+        System.out.println("5. Failed Payment: " + failed);
     }
 }
