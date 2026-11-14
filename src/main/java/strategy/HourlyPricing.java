@@ -8,6 +8,6 @@ public class HourlyPricing implements PricingStrategy {
 
     @Override
     public String getName() {
-        return "Hourly";
+        return "HOURLY";
     }
 }

@@ -8,6 +8,6 @@ public class WeeklyPricing implements PricingStrategy {
 
     @Override
     public String getName() {
-        return "Weekly";
+        return "WEEKLY";
     }
 }

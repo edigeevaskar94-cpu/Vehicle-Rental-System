@@ -8,6 +8,6 @@ public class DailyPricing implements PricingStrategy {
 
     @Override
     public String getName() {
-        return "Daily";
+        return "DAILY";
     }
 }
