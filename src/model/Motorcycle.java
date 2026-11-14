@@ -1,7 +1,7 @@
 
 package model;
 
-public class Motorcycle extends Car {
+public class Motorcycle extends AbstractVehicle {
 
     public Motorcycle(String id, String brand, String model,
                       double hourlyRate, double dailyRate, double weeklyRate) {
@@ -10,8 +10,8 @@ public class Motorcycle extends Car {
 
     @Override
     public String toString() {
-        return "Motorcycle: " + getBrand() + " " + getModel() +
-                " | ID: " + getId() +
-                " | Available: " + isAvailable();
+        return "Motorcycle: " + getBrand() + " " + getModel()
+                + " | ID: " + getId()
+                + " | Available: " + isAvailable();
     }
 }
