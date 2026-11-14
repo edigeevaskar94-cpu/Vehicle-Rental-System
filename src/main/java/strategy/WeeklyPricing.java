@@ -11,7 +11,12 @@ public class WeeklyPricing implements PricingStrategy {
         if (duration <= 0) {
             throw new IllegalArgumentException("Duration must be a positive integer");
         }
-        return vehicle.getWeeklyRate() * duration;
+
+        double price = vehicle.getWeeklyRate() * duration;
+        if (price < 0) {
+            throw new ArithmeticException("Calculation overflow or invalid price");
+        }
+        return price;
     }
 
     @Override

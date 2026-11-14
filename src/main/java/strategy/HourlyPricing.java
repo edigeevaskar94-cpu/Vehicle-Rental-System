@@ -11,7 +11,12 @@ public class HourlyPricing implements PricingStrategy {
         if (duration <= 0) {
             throw new IllegalArgumentException("Duration must be a positive integer");
         }
-        return vehicle.getHourlyRate() * duration;
+
+        double price = vehicle.getHourlyRate() * duration;
+        if (price < 0) {
+            throw new ArithmeticException("Calculation overflow or invalid price");
+        }
+        return price;
     }
 
     @Override
