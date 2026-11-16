@@ -42,6 +42,11 @@ public class RentalServiceFacade {
 
     public Vehicle registerVehicle(String type, String id, String brand, String model,
                                    double hourlyRate, double dailyRate, double weeklyRate) {
+        if (findVehicleById(id) != null) {
+            System.out.println("Error: Vehicle with ID '" + id + "' already exists!");
+            return null;
+        }
+
         VehicleCreator creator;
         switch (type.toLowerCase()) {
             case "car":
@@ -83,8 +88,7 @@ public class RentalServiceFacade {
             return null;
         }
 
-        CustomerObserver customerObserver = new CustomerObserver(customerName);
-        eventPublisher.subscribe(customerObserver);
+        eventPublisher.subscribe(new CustomerObserver(customerName));
 
         PricingStrategy strategy;
         switch (pricingType.toLowerCase()) {
@@ -114,17 +118,20 @@ public class RentalServiceFacade {
                 .build();
 
         orders.add(order);
-        eventPublisher.notifyObservers("Rental Order " + orderId + " created for " + targetVehicle.getBrand() + " " + targetVehicle.getModel() + " (Total: " + totalPrice + ")");
+        eventPublisher.notifyCustomerAndAdmin(customerName,
+                "Rental Order " + orderId + " created for " + targetVehicle.getBrand() + " " + targetVehicle.getModel() + " (Total: " + totalPrice + ")");
 
         boolean paymentSuccess = paymentProcessor.processPayment(totalPrice);
 
         if (paymentSuccess) {
             order.setStatus(OrderStatus.CONFIRMED);
             targetVehicle.setAvailable(false);
-            eventPublisher.notifyObservers("Payment Successful! Rental " + orderId + " confirmed! Vehicle " + vehicleId + " is now rented.");
+            eventPublisher.notifyCustomerAndAdmin(customerName,
+                    "Payment Successful! Rental " + orderId + " confirmed! Vehicle " + vehicleId + " is now rented.");
         } else {
             order.setStatus(OrderStatus.PAYMENT_FAILED);
-            eventPublisher.notifyObservers("Payment Failed for Rental " + orderId + " (Amount " + totalPrice + " exceeds limit). Vehicle " + vehicleId + " remains available.");
+            eventPublisher.notifyCustomerAndAdmin(customerName,
+                    "Payment Failed for Rental " + orderId + " (Amount " + totalPrice + " exceeds limit). Vehicle " + vehicleId + " remains available.");
         }
 
         return order;
@@ -146,7 +153,8 @@ public class RentalServiceFacade {
         if (!v.isAvailable()) {
             v.setAvailable(true);
         }
-        eventPublisher.notifyObservers("Rental " + orderId + " cancelled. Vehicle " + v.getId() + " is available again.");
+        eventPublisher.notifyCustomerAndAdmin(order.getCustomerName(),
+                "Rental " + orderId + " cancelled. Vehicle " + v.getId() + " is available again.");
     }
 
     public void returnVehicle(String orderId) {
@@ -163,7 +171,8 @@ public class RentalServiceFacade {
         order.setStatus(OrderStatus.RETURNED);
         Vehicle v = order.getVehicle();
         v.setAvailable(true);
-        eventPublisher.notifyObservers("Vehicle " + v.getId() + " returned (Order " + orderId + "). Vehicle " + v.getId() + " is available again.");
+        eventPublisher.notifyCustomerAndAdmin(order.getCustomerName(),
+                "Vehicle " + v.getId() + " returned (Order " + orderId + "). Vehicle " + v.getId() + " is available again.");
     }
 
     public List<RentalOrder> getRentalOrders() {
